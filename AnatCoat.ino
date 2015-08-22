@@ -52,8 +52,7 @@ void outlineWave() {
 		//uint8_t wave = quadwave8(millis()/13+i*11);
 		offset += scale8(quadwave8(add8(now/117, i)), 37);
 		offset += scale8(quadwave8(add8(now/29, i)), 23);
-		uint8_t wave = quadwave8( offset);
-
+		uint8_t wave = quadwave8(offset);
 
 		// Set the i'th led to red 
 		ledsOutline[i] = CHSV(add8(i,now/27), 255, qsub8(wave,20));
@@ -79,9 +78,8 @@ void loop() {
 	outlineWave();
 	for(int i = 0; i < MAN_NUM_LEDS; i++) {
 		// Set the i'th led to red 
-		ledsMan[i] = CHSV((i/10)*25, 255, 255);
+		ledsMan[i] = CHSV(millis()/337, 255, qsub8(quadwave8(millis()*256/10000), 20));
 	}
-	ledsMan[2] = 0;
 	FastLED.show();
 	FastLED.delay(10);
 	/*
