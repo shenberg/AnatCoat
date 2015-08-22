@@ -43,6 +43,9 @@ void fadeall() {
 	for(int i = 0; i < MAN_NUM_LEDS; i++) { ledsMan[i].nscale8(250); } 		
 }
 
+void fadeMan() {
+	for(int i = 0; i < MAN_NUM_LEDS; i++) { ledsMan[i].nscale8(230); } 		
+}
 void outlineWave() {
 	uint8_t offset = 0;
 	unsigned long now = millis();
@@ -76,12 +79,22 @@ void loop() {
 	}
 	//ledsOutline[5] = 0;*/
 	outlineWave();
-	for(int i = 0; i < MAN_NUM_LEDS; i++) {
-		// Set the i'th led to red 
-		ledsMan[i] = CHSV(millis()/337, 255, qsub8(quadwave8(millis()*256/10000), 20));
+	// if we're in an even minute, cylon man, otherwise, breathe
+	if ((millis() / 60000) % 4 == 0) {
+		fadeMan();
+		uint8_t pos = triwave8(millis()/15);
+		uint8_t offset = 255*(pos % MAN_NUM_LEDS) / MAN_NUM_LEDS;
+		uint8_t led = map8(pos, 0, MAN_NUM_LEDS);
+		ledsMan[led] = CHSV(millis()/237, 255, 255);
+	} else {
+		for(int i = 0; i < MAN_NUM_LEDS; i++) {
+			// breathe. finish cycle through colors every 256*337 ms - ~86 seconds
+			// 1 cycle of brightness is 10 seconds
+			ledsMan[i] = CHSV(millis()/337, 255, qsub8(quadwave8(millis()*256/10000), 20));
+		}
 	}
 	FastLED.show();
-	FastLED.delay(10);
+	FastLED.delay(5);
 	/*
 	// First slide the led in one direction
 	for(int i = 0; i < OUTLINE_NUM_LEDS; i++) {
