@@ -44,13 +44,27 @@ void fadeall() {
 }
 
 void outlineWave() {
+	uint8_t offset = 0;
+	unsigned long now = millis();
 	for(int i = 0; i < OUTLINE_NUM_LEDS; i++) {
-		uint8_t wave = quadwave8(millis()/13+i*11);
+		// note about math: 1 cycle of a wave is in the range 0-255
+		// so millis / divider will take 256*divider milliseconds for a complete cycle
+		//uint8_t wave = quadwave8(millis()/13+i*11);
+		offset += scale8(quadwave8(add8(now/117, i)), 37);
+		offset += scale8(quadwave8(add8(now/29, i)), 23);
+		uint8_t wave = quadwave8( offset);
+
 
 		// Set the i'th led to red 
-		ledsOutline[i] = CHSV(i, 255, qsub8(wave,20));
+		ledsOutline[i] = CHSV(add8(i,now/27), 255, qsub8(wave,20));
 	}
+}
 
+void outlineRandomAmplitude(uint16_t delta) {
+	// elapsed time
+	static uint16_t time = 0;
+	time += delta;
+	//for(int i = 0; i < )
 }
 
 void loop() { 
